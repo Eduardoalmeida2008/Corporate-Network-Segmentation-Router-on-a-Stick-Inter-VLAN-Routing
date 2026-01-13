@@ -1,43 +1,56 @@
-# Corporate Infrastructure: Multi-Switch VLAN Segmentation
+# Corporate Network: VLAN Segmentation and Inter-VLAN Routing
 
 ## 📌 Project Overview
-This project focuses on the Layer 2 architectural design of a corporate network. The goal was to implement departmental isolation through VLANs across multiple switches, ensuring network efficiency and security by controlling broadcast domains and organizing device connectivity.
+This project demonstrates the implementation of a segmented local area network (LAN) for a corporate environment. Using a "Router-on-a-Stick" architecture, the network isolates departments into specific VLANs to enhance security, reduce broadcast domains, and organize traffic flow. All inter-VLAN communication is managed by a central router.
 
 ## 🚀 Technical Features
-* **Departmental Segmentation:** Precise configuration of named VLANs to isolate departments (e.g., Sales, HR, IT).
-* **VLAN Assignment:** Strategic port assignment on multiple Access Switches.
-* **802.1Q Trunking:** Implementation of trunk links between switches to carry VLAN traffic across the entire topology.
-* **Naming Standardization:** Strict naming convention for both network devices and VLAN IDs for easier troubleshooting.
+* **Departmental Segmentation:** Creation of specific VLANs for Finance, HR, and Sales departments.
+* **Inter-VLAN Routing:** Configuration of subinterfaces on a Cisco 1941 router to bridge communication between different network segments.
+* **IEEE 802.1Q Trunking:** Implementation of trunk links between Cisco 2960 switches and the 1941 router.
+* **Network Hardware:** * 01 Cisco 1941 Integrated Services Router.
+    * 02 Cisco Catalyst 2960 Series Switches.
 
-## 📊 VLAN & Device Inventory
-| Switch Name | VLAN ID | VLAN Name | Purpose |
-| :--- | :--- | :--- | :--- |
-| **S1-CORE** | 10 | **Sales** | Commercial Dept |
-| **S2-ACCESS**| 20 | **Human_Resources** | HR Dept |
-| **S3-ACCESS**| 30 | **IT_Admin** | Network Management |
+## 📊 VLAN & Addressing Plan
+| Device | VLAN ID | Department | Subnet | Gateway |
+| :--- | :--- | :--- | :--- | :--- |
+| **Switch 1** | 10 | **FINANCE** | 192.168.10.0/24 | 192.168.10.1 |
+| **Switch 1** | 20 | **HR** | 192.168.20.0/24 | 192.168.20.1 |
+| **Switch 2** | 30 | **SALES** | 192.168.30.0/24 | 192.168.30.1 |
 
-## ⚙️ Verified Configuration Snippets
+## ⚙️ Configuration Snippets (CLI)
 
-### VLAN Creation and Naming
+### 1. VLAN Database Creation (Switch 1 & 2)
 ```bash
-Switch(config)# vlan 10
-Switch(config-vlan)# name Sales
-Switch(config-vlan)# exit
+S1# configure terminal
+S1(config)# vlan 10
+S1(config-vlan)# name FINANCE
+S1(config-vlan)# vlan 20
+S1(config-vlan)# name HR
 !
-Switch(config)# interface range fastEthernet 0/1 - 10
-Switch(config-if-range)# switchport mode access
-Switch(config-if-range)# switchport access vlan 10
+S2(config)# vlan 30
+S2(config-vlan)# name SALES
 ```
-Trunking Configuration
-````
-Switch(config)# interface gigabitEthernet 0/1
-Switch(config-if)# switchport mode trunk
-````
+
+2. Router-on-a-Stick Configuration (Router 1941)
+```
+R1(config)# interface gigabitEthernet 0/0.10
+R1(config-subif)# encapsulation dot1Q 10
+R1(config-subif)# ip address 192.168.10.1 255.255.255.0
+!
+R1(config)# interface gigabitEthernet 0/0.20
+R1(config-subif)# encapsulation dot1Q 20
+R1(config-subif)# ip address 192.168.20.1 255.255.255.0
+!
+R1(config)# interface gigabitEthernet 0/0.30
+R1(config-subif)# encapsulation dot1Q 30
+R1(config-subif)# ip address 192.168.30.1 255.255.255.0
+```
+
 🧪 Verification & Results
-VLAN Database: Confirmed via show vlan brief showing all names and active ports.
+VLAN Database: Confirmed via show vlan brief on both switches, showing active status for FINANCE, HR, and SALES.
 
-Trunk Status: Verified through show interfaces trunk to ensure 802.1Q encapsulation is active.
+Trunking Protocol: Verified using show interfaces trunk to ensure 802.1Q encapsulation is active on inter-switch and router links.
 
-````
+Connectivity Test: Successful end-to-end ICMP (ping) tests between hosts in different VLANs, confirming operational routing.
+
 Developed by [Eduardo]
-````
