@@ -1,51 +1,50 @@
-# Corporate Network Segmentation 🌐
-**A reliable Inter-VLAN routing solution using the "Router-on-a-Stick" architecture for department-level connectivity.**
+# Enterprise Network & DHCP Infrastructure 🌐
+**A robust Inter-VLAN routing and automated IP addressing solution for RH, VENDA, and FINANCEIRO departments.**
 
 ## 📌 Project Overview
-This project simulates a common corporate scenario where different departments (HR, Sales, and IT) need to be isolated in their own **VLANs** for security and performance, but still require a way to communicate. Using a single Cisco Router and Trunking protocols, I implemented a robust routing path between these segments.
+This project simulates a real-world corporate scenario. I implemented a **Centralized DHCP Server** on a Cisco Router to automate network configuration for three specific departments: **RH (Human Resources)**, **VENDA (Sales)**, and **FINANCEIRO (Finance)**. By using the Router-on-a-Stick method, I ensured that these isolated VLANs can communicate securely through a single physical interface.
 
-> **Architecture:** Router-on-a-Stick (Inter-VLAN Routing) ✅
+> **Architecture:** Router-on-a-Stick + Centralized DHCP Server ✅
 
 ## 📐 Network Topology
 ![Network Topology](01_logical_topology.png)
-*Topology showing the central Router acting as the Gateway for multiple VLAN-segmented Switches.*
+*Detailed topology showing the Router as the Gateway for RH, VENDA, and FINANCEIRO.*
 
 ## 🛠️ Tech Stack & Protocols
 - **Tool:** Cisco Packet Tracer
-- **Methodology:** Router-on-a-Stick
+- **Methodology:** Router-on-a-Stick (Inter-VLAN Routing)
+- **DHCP Services:** Centralized Pools for each department
 - **Encapsulation:** IEEE 802.1Q (Dot1Q)
-- **VLANs:** 10 (HR), 20 (Sales), 30 (IT Support)
-- **Trunking:** Trunk mode links between Switches and Router
-- **Testing:** ICMP (Ping) verification
+- **Segmentation:** VLAN 10 (RH), VLAN 20 (VENDA), VLAN 30 (FINANCEIRO)
+- **Verification:** ICMP (Ping) & IP Config analysis
 
 ## ⚙️ Configuration Highlights
 
-### 1. VLAN Segmentation
-Each department is isolated in its own broadcast domain:
-- **VLAN 10 (HR):** `192.168.10.0/24`
-- **VLAN 20 (Sales):** `192.168.20.0/24`
-- **VLAN 30 (IT):** `192.168.30.0/24`
+### 1. Centralized DHCP Pools
+The router manages three distinct pools to ensure each department stays in its subnet:
+- **Pool RH:** `192.168.10.0/24`
+- **Pool VENDA:** `192.168.20.0/24`
+- **Pool FINANCEIRO:** `192.168.30.0/24`
 
-### 2. Router Sub-Interfaces
-The Router's physical interface was divided into logical **Sub-interfaces** (e.g., `G0/0.10`), each acting as the Default Gateway for its respective VLAN.
+### 2. Logical Segmentation (802.1Q)
+Configured sub-interfaces on the main Router to handle traffic for all three VLANs, providing a scalable and cost-effective routing solution.
 
-## 🧪 Connectivity & Proof of Success
+## 🧪 Proof of Success
 
-### Cross-Department Ping
-The ultimate test: a host from the **HR** department successfully communicating with the **IT Support** department.
-![Ping Test Result](2_Ping_Test_Success.png)
-*Result: 0% packet loss, confirming the Router is correctly switching traffic between sub-interfaces.*
-
-### Host IP Configuration
-Verification of the static IP scheme and the correct Default Gateway for each segment.
-![IP Configuration Proof](03_IP_Configuration_Verification.png)
+### DHCP Addressing Verification
+Verification of a host in the **FINANCEIRO** or **VENDA** department receiving its automated IP configuration from the Router.
+![DHCP Verification](07_pcVLAN10_ip_configurationn.png) 
+### End-to-End Connectivity (Inter-VLAN Ping)
+Confirming that the **RH** department can reach the **FINANCEIRO** department through the gateway, proving the routing logic is flawless.
+![Ping Test Result](09_test-ping_vlan10.png)
+*Result: 0% packet loss and successful DHCP lease verification.*
 
 ## 📁 Repository Structure
 - `/topology`: Cisco Packet Tracer source file (.pkt).
-- `/print`: Screenshots of the environment and verification tests.
+- `/print`: Screenshots of topology, DHCP leases, and connectivity tests.
 - `README.md`: Project documentation.
 
 ---
 **Developed by:** Eduardo Almeida  
 **Date:** January 2026  
-*Focused on Infrastructure, Connectivity, and Network Security.*
+*Enterprise Networking, Automated Services, and Infrastructure Design.*
